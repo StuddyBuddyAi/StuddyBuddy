@@ -8,6 +8,10 @@ class StudyRequest(BaseModel):
     deadlines: list
     energy_levels: list
 
+@app.get("/ping")
+def ping():
+    return {"message": "pong"}
+
 @app.post("/generate_schedule/")
 def schedule(request: StudyRequest):
     return generate_schedule(request.deadlines, request.energy_levels)
