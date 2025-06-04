@@ -107,5 +107,5 @@ This project is currently shared within the scope of a team project and is not y
 ## 👥 Project Collaborators
 
 - [Anastasia Altamirano](https://github.com/anapaltami)
-- Michael Nathan Belisaire
+- [Michael Nathan Belisaire](https://github.com/SoldierTaker)
 - [Nathaniel McCleary](https://github.com/nate254347)
