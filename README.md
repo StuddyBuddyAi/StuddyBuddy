@@ -8,6 +8,15 @@
   Your intelligent study companion — powered by Unity and AI.
 </p>
 
+<p align="center">
+  <a href="https://github.com/StuddyBuddyAi/StuddyBuddy/issues">
+    <img alt="Issues" src="https://img.shields.io/github/issues/StuddyBuddyAi/StuddyBuddy?style=flat-square&logo=github">
+  </a>
+  <a href="https://github.com/StuddyBuddyAi/StuddyBuddy/blob/main/LICENSE">
+    <img alt="License" src="https://img.shields.io/badge/license-pending-lightgrey?style=flat-square">
+  </a>
+</p>
+
 ---
 
 ## 📚 About the Project
