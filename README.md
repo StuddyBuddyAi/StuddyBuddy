@@ -31,9 +31,18 @@ This project is part of a collaborative development effort and is currently unde
 - Adaptive Pomodoro timers with smart break reminders
 - Visual task timeline and calendar views
 - Continuous habit tracking and personalized feedback
-- Unity + Python backend integration using FastAPI
+
+## Technologies
+- Unity
+- C# 
+- Python backend integration using FastAPI
 
 ## 🛠️ Installation
+
+- Download the Build folder from the OneDrive or the GitHub
+- Run the exe file inside for the current runnable build
+
+## Development Setup
 
 ### Clone the Repository
 
@@ -61,16 +70,6 @@ Steps include:
 
 Make sure the Python server is running locally before entering Play mode.
 
-## 🧪 Current Development Status
-
-| Component             | Status                        |
-| --------------------- | ----------------------------- |
-| Python API Server     | ✅ Ping endpoint working       |
-| Unity HTTP Connection | ✅ Working via UnityWebRequest |
-| AI Schedule Stub      | 🔧 In development             |
-| Pomodoro Timer Logic  | ⏳ Planned                    |
-| Habit Tracking        | ⏳ Planned                     |
-
 ## 🤝 Contribution
 
 We welcome contributions once the core system is stabilized. For now, teammates should:
@@ -84,6 +83,22 @@ A full contribution guide will be added soon.
 ## 📄 License
 
 This project is currently shared within the scope of a team project and is not yet licensed for public distribution. License to be added in final release phase.
+
+## 👥 Project Contributors 
+
+- [Anastasia Altamirano](https://github.com/anapaltami)
+- [Michael Nathan Belisaire](https://github.com/SoldierTaker)
+- [Nathaniel McCleary](https://github.com/nate254347)
+
+## 🧪 Current Project Status : Pre-Alpha stage
+
+| Component             | Status                        |
+| --------------------- | ----------------------------- |
+| Python API Server     | ✅ Ping endpoint working       |
+| Unity HTTP Connection | ✅ Working via UnityWebRequest |
+| AI Schedule Stub      | 🔧 In development             |
+| Pomodoro Timer Logic  | ⏳ Planned                    |
+| Habit Tracking        | ⏳ Planned                     |
 
 ## 🙌 Credits
 
@@ -104,8 +119,3 @@ This project is currently shared within the scope of a team project and is not y
 | ![](docs/EFC3CA.png) | Blush | `#EFC3CA` | `rgb(239, 195, 202)` | `hsl(349, 60%, 85%)` |
 | ![](docs/FE9900.png) | Orange | `#FE9900` | `rgb(254, 153, 0)` | `hsl(35, 100%, 50%)` |
 
-## 👥 Project Collaborators
-
-- [Anastasia Altamirano](https://github.com/anapaltami)
-- [Michael Nathan Belisaire](https://github.com/SoldierTaker)
-- [Nathaniel McCleary](https://github.com/nate254347)
