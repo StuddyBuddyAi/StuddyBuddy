@@ -88,7 +88,7 @@ This project is currently shared within the scope of a team project and is not y
 
 - [Anastasia Altamirano](https://github.com/anapaltami)
 - [Michael Nathan Belisaire](https://github.com/SoldierTaker)
-- [Nathaniel McCleary](https://github.com/nate254347)
+- [Nathaniel McCleery](https://github.com/nate254347)
 
 ## 🧪 Current Project Status : Pre-Alpha stage
 
