@@ -1,12 +1,11 @@
 using UnityEngine;
 
-public class InventoryToggle : MonoBehaviour
+public class UIToggle : MonoBehaviour
 {
     public GameObject UIPanel;
 
-    public void ToggleInventory()
+    public void ToggleUI()
     {
-        Debug.Log("Inventory toggle button clicked.");
 
         if (UIPanel != null)
         {
