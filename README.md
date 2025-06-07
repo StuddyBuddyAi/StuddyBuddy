@@ -54,7 +54,7 @@ cd StuddyBuddy
 ### Python Backend Setup
 
 Please follow the full backend setup guide here:
-📄 [docs/setup-python-backend.md](docs\setup-python-backend.md)
+📄 [docs/setup-python-backend.md](docs/setup-python-backend.md)
 
 Steps include:
 - Creating and activating a Python ```venv```
