@@ -32,10 +32,10 @@ This project is part of a collaborative development effort and is currently unde
 - Visual task timeline and calendar views
 - Continuous habit tracking and personalized feedback
 
-## Technologies
+## ⚙ Technologies
 - Unity
 - C# 
-- Python backend integration using FastAPI
+- Python backend integration using FastAPI and uvicorn
 
 ## 🛠️ Installation
 
@@ -54,7 +54,7 @@ cd StuddyBuddy
 ### Python Backend Setup
 
 Please follow the full backend setup guide here:
-📄 [docs/setup-python-backend.md](docs\setup-python-backend.md)
+📄 [docs/setup-python-backend.md](docs/setup-python-backend.md)
 
 Steps include:
 - Creating and activating a Python ```venv```
@@ -102,7 +102,7 @@ This project is currently shared within the scope of a team project and is not y
 
 ## 🙌 Credits
 
-- Logo based on an illustration by [Design.com] – Modified for the project
+- Logo based on an illustration by [Design.com](https://www.design.com) – Modified for the project
 - Owl mascot & icon style inspired by [Study-focused UI trends]
 - Fonts: ADLaM Display, Aharoni, Quicksand
 
