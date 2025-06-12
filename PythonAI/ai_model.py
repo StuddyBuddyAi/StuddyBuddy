@@ -1,3 +1,5 @@
+import openai
+import os
 from datetime import datetime, timedelta
 from typing import List
 from models import Task, TimeSlot, StudyRequest, Session, ScheduleResponse
@@ -70,3 +72,25 @@ def format_schedule_prompt(request: StudyRequest) -> str:
     
     lines.append("\nPlease generate an optimized study schedule using the given constraints.")
     return "\n".join(lines)
+
+def call_openai_api(prompt: str) -> str:
+    """
+    Sends the formatted prompt to OpenAI and returns the raw response text.
+    """
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+
+    if not openai.api_key:
+        raise RuntimeError("OPENAI_API_KEY is not set in environment variables.")
+    
+    response = openai.ChatCompletion.create(
+        model = "gpt-4", # or gpt-3.5-turbo if preferred
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant that generates study schedules."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature = 0.7, # Adjust temperature for creativity vs. precision
+        max_tokens = 1000, # Limit response length
+        n = 1 # Number of responses to generate
+    )
+
+    return response.choices[0].message['content'].strip()
