@@ -97,8 +97,9 @@ This project is currently shared within the scope of a team project and is not y
 | Python API Server     | ✅ Ping endpoint working       |
 | Unity HTTP Connection | ✅ Working via UnityWebRequest |
 | AI Schedule Stub      | 🔧 In development             |
-| Pomodoro Timer Logic  | ⏳ Planned                    |
-| Habit Tracking        | ⏳ Planned                     |
+| Calendar              | ⏳ Planned                    |
+| Scheduling            | ⏳ Planned                     |
+| AI Time Slot Selection (LLM)        | ⏳ Planned                     |
 
 ## 🙌 Credits
 
