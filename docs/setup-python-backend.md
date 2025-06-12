@@ -9,15 +9,25 @@ This guide will walk you through setting up the Python backend (/PythonAI/) for 
 Make sure your folder looks like this:
 
 StudyBuddy/
+
 ├── Assets/
+
 ├── PythonAI/
+
 │ ├── ai_model.py
+
 │ ├── app.py
+
 │ ├── README.md <-- You are here! 👌
+
 │ ├── requirements.txt
+
 │ └── venv/ <-- will be created for you
+
 ├── ProjectSettings/
+
 ├── .gitignore
+
 └── ...
 
 ---
@@ -37,25 +47,25 @@ StudyBuddy/
 
 ### ✅ 1. Clone the Feature Branch
 
-bash
+```bash
 git clone https://github.com/nate254347/StuddyBuddy.git
 cd StuddyBuddy
-git checkout feature/ai-backend-integration
-
+git checkout -b main origin/main
+```
 
 ---
 
 ### 🧪 2. Set Up the Python Environment
 
 Navigate into the backend folder:
-bash
+```bash
 cd PythonAI
-
+```
 
 Create a virtual environment:
-bash
+```bash
 python -m venv venv
-
+```
 This creates an isolated Python environment just for this project.
 
 ---
@@ -68,14 +78,18 @@ This creates an isolated Python environment just for this project.
 - Open the terminal in VS Code (Ctrl + ~)
 
 Run:
-bash
+```bash
 # in PowerShell if on Windows
 .\venv\Scripts\Activate.ps1
-
+```
+```bash
 # OR CMD
 venv\Scripts\activate.bat
-
-You should see (venv) in your terminal prompt.
+```
+You should see (venv) in your terminal prompt now and it should look like this:
+```bash
+(venv) C:\path\to\StuddyBuddy\PythonAI>
+```
 
 #### If Using Visual Studio 2022
 - Open Visual Studio
@@ -90,9 +104,9 @@ You should see (venv) in your terminal prompt.
 ### 📦 4. Install Dependencies
 
 With the virtual environment activated:
-bash
+```bash
 pip install -r requirements.txt
-
+```
 This installs:
 - FastAPI (web framework)
 - Uvicorn (server runner)
@@ -103,14 +117,14 @@ This installs:
 ### 🚀 5. Run the FastAPI Server
 
 Still in the PythonAI folder and with venv active:
-bash
+```bash
 uvicorn app:app --reload
-
+```
 
 You should see output like:
-bash
+```bash
 Uvicorn running on http://127.0.0.1:8000
-
+```
 
 ---
 
@@ -120,9 +134,9 @@ Open a browser and go to:
 - http://localhost:8000/ping
    → Should return:
    
-bash
+```bash
    {"message": "pong"}
-
+```
 
 You can also test the interactive docs at:
 http://localhost:8000/docs
@@ -135,9 +149,9 @@ If the Unity project is open:
 - Open the test scene that includes the PingTester script or AI HTTP client
 - Enter Play Mode
 - You should see the response in Unity's Console:
-css
+```css
 Response from server: {"message":"pong"}
-
+```
 
 ---
 
