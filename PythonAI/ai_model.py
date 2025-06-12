@@ -1,8 +1,11 @@
 import openai
 import os
+from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from typing import List
 from models import Task, TimeSlot, StudyRequest, Session, ScheduleResponse
+
+load_dotenv()  # Load environment variables from .env file
 
 def generate_schedule(request: StudyRequest) -> ScheduleResponse:
     sessions: List[Session] = []
