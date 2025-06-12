@@ -48,3 +48,25 @@ def generate_schedule(request: StudyRequest) -> ScheduleResponse:
         success=len(remaining_tasks) == 0,
         message="All tasks scheduled successfully." if not remaining_tasks else "Some tasks could not be scheduled due to time constraints."
     )
+
+def format_schedule_prompt(request: StudyRequest) -> str:
+    """
+    Converts a StudyRequest into a natural-language prompt string for the LLM.
+    """
+    lines = []
+    lines.append(f"The user prefers a study session length of {request.session_length_minutes} minutes.")
+    lines.append(f"Available time slots with energy levels for the user are:")
+    for i, slot in enumerate(request.available_slots):
+        energy = request.energy_level[i] if i < len(request.energy_level) else "unknown"
+        start = slot.start_time.strftime("%A, %B %d at %I:%M %p")
+        end = slot.end_time.strftime("%I:%M %p")
+        lines.append(f"- {start} to {end} (Energy Level: {energy})")
+    
+    lines.append("Tasks to be scheduled:")
+    for task in request.tasks:
+        due = task.due_date.strftime("%A, %B %d")
+        category = f" [{task.category}]" if task.category else ""
+        lines.append(f"- {task.title}{category}, {task.duration_minutes} due {due}")
+    
+    lines.append("\nPlease generate an optimized study schedule using the given constraints.")
+    return "\n".join(lines)
