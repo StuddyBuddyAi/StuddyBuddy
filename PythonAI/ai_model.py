@@ -58,7 +58,7 @@ def format_schedule_prompt(request: StudyRequest) -> str:
     lines.append(f"Available time slots with energy levels for the user are:")
     for i, slot in enumerate(request.available_slots):
         energy = request.energy_level[i] if i < len(request.energy_level) else "unknown"
-        start = slot.start_time.strftime("%A, %B %d at %I:%M %p")
+        start = slot.start_time.strftime("%A, %B %d at %I:%M %p") # Format time like Wednesday, June 11 at 05:29 PM
         end = slot.end_time.strftime("%I:%M %p")
         lines.append(f"- {start} to {end} (Energy Level: {energy})")
     
