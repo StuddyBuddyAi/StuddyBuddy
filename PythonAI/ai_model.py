@@ -59,7 +59,7 @@ def format_schedule_prompt(request: StudyRequest) -> str:
     Converts a StudyRequest into a natural-language prompt string for the LLM.
     """
     lines = []
-    lines.append(f"The user prefers a study session length of {request.session_length_minutes} minutes.")
+    lines.append(f"The user prefers a study session length of {request.pomodoro_length} minutes.")
     lines.append(f"Available time slots with energy levels for the user are:")
     for i, slot in enumerate(request.available_slots):
         energy = request.energy_level[i] if i < len(request.energy_level) else "unknown"
@@ -80,13 +80,14 @@ def call_openai_api(prompt: str) -> str:
     """
     Sends the formatted prompt to OpenAI and returns the raw response text.
     """
+    client = openai.Client()  # Initialize OpenAI client
     openai.api_key = os.getenv("OPENAI_API_KEY")
 
     if not openai.api_key:
         raise RuntimeError("OPENAI_API_KEY is not set in environment variables.")
-    
-    response = openai.ChatCompletion.create(
-        model = "gpt-4", # or gpt-3.5-turbo if preferred
+
+    response = client.chat.completions.create(
+        model = "gpt-4",
         messages = [
             {"role": "system", "content": "You are a helpful assistant that generates study schedules."},
             {"role": "user", "content": prompt}
