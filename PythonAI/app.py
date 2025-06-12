@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from ai_model import generate_schedule
+from ai_model import generate_schedule, format_schedule_prompt, call_openai_api
 from models import StudyRequest, ScheduleResponse
 
 app = FastAPI()
@@ -15,13 +15,15 @@ def schedule(request: StudyRequest):
 @app.post("/generate_ai_schedule/")
 def generate_ai_schedule_stub(request: StudyRequest):
     """
-    This is a placeholder for the AI-based scheduling route.
-    For now, it just confirms receipt of the request.
+    Calls OpenAI API with a formatted schedule prompt and returns raw response text.
     """
-    return {
-        "status": "ok",
-        "user_id": request.user_id,
-        "num_tasks": len(request.tasks),
-        "num_slots": len(request.available_slots),
-        "message": "Stub endpoint for AI-based scheduling. LLM logic not implemented yet."
-    }
+    try:
+        prompt = format_schedule_prompt(request)
+        gpt_response = call_openai_api(prompt)
+        return {
+            "user_id": request.user_id,
+            "gpt_response": gpt_response,
+            "prompt_used": prompt, # for debugging
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
