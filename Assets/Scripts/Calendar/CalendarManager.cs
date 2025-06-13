@@ -40,7 +40,13 @@ public class CalendarManager : MonoBehaviour
         int startDay = (int)new DateTime(year, month, 1).DayOfWeek;
 
         for (int i = 0; i < startDay; i++)
-            Instantiate(dayCellPrefab, dayGrid);
+        {
+            GameObject blankCell = Instantiate(dayCellPrefab, dayGrid);
+          
+            var img = blankCell.GetComponent<Image>();
+            if (img) img.color = new Color(0, 0, 0, 0);
+        }
+
 
         for (int day = 1; day <= daysInMonth; day++)
         {
