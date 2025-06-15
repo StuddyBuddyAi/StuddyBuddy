@@ -56,5 +56,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "StuddyBuddy.sln"
+    "dotnet.defaultSolution": "StuddyBuddy.sln",
+    "dotnet.preferCSharpExtension": true
 }
