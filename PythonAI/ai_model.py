@@ -93,4 +93,4 @@ def call_openai_api(prompt: str) -> str:
         n = 1 # Number of responses to generate
     )
 
-    return response.choices[0].message.content
+    return response.choices[0].message.content.strip()
