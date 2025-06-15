@@ -1,5 +1,5 @@
-import openai
 import os
+from openai import OpenAI
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from typing import List
@@ -80,11 +80,7 @@ def call_openai_api(prompt: str) -> str:
     """
     Sends the formatted prompt to OpenAI and returns the raw response text.
     """
-    client = openai.Client()  # Initialize OpenAI client
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-
-    if not openai.api_key:
-        raise RuntimeError("OPENAI_API_KEY is not set in environment variables.")
+    client = OpenAI()  # Initialize OpenAI client
 
     response = client.chat.completions.create(
         model = "gpt-4",
@@ -97,4 +93,4 @@ def call_openai_api(prompt: str) -> str:
         n = 1 # Number of responses to generate
     )
 
-    return response.choices[0].message['content'].strip()
+    return response.choices[0].message.content
