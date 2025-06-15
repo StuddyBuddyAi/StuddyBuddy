@@ -30,6 +30,35 @@ public class StudyRequest
     public TaskData[] tasks;
 }
 
+[Serializable]
+public class ScheduledTask
+{
+    public string title;
+    public string due_date;
+    public int duration_minutes;
+    public string category;
+}
+
+[Serializable]
+public class SessionData
+{
+    public ScheduledTask task;
+    public string start_time;
+    public string end_time;
+    public int break_after;
+}
+
+[Serializable]
+public class ScheduleResponse
+{
+    public string user_id;
+    public List<SessionData> sessions;
+    public int total_study_time;
+    public int total_break_time;
+    public bool success;
+    public string message;
+}
+
 public class ScheduleApiClient : MonoBehaviour
 {
     private const string API_URL = "http://127.0.0.1:8000/generate_schedule";
