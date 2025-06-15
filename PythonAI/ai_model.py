@@ -1,6 +1,11 @@
+import os
+from openai import OpenAI
+from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from typing import List
 from models import Task, TimeSlot, StudyRequest, Session, ScheduleResponse
+
+load_dotenv()  # Load environment variables from .env file
 
 def generate_schedule(request: StudyRequest) -> ScheduleResponse:
     sessions: List[Session] = []
@@ -48,3 +53,44 @@ def generate_schedule(request: StudyRequest) -> ScheduleResponse:
         success=len(remaining_tasks) == 0,
         message="All tasks scheduled successfully." if not remaining_tasks else "Some tasks could not be scheduled due to time constraints."
     )
+
+def format_schedule_prompt(request: StudyRequest) -> str:
+    """
+    Converts a StudyRequest into a natural-language prompt string for the LLM.
+    """
+    lines = []
+    lines.append(f"The user prefers a study session length of {request.pomodoro_length} minutes.")
+    lines.append(f"Available time slots with energy levels for the user are:")
+    for i, slot in enumerate(request.available_slots):
+        energy = request.energy_level[i] if i < len(request.energy_level) else "unknown"
+        start = slot.start_time.strftime("%A, %B %d at %I:%M %p") # Format time like Wednesday, June 11 at 05:29 PM
+        end = slot.end_time.strftime("%I:%M %p")
+        lines.append(f"- {start} to {end} (Energy Level: {energy})")
+    
+    lines.append("Tasks to be scheduled:")
+    for task in request.tasks:
+        due = task.due_date.strftime("%A, %B %d")
+        category = f" [{task.category}]" if task.category else ""
+        lines.append(f"- {task.title}{category}, {task.duration_minutes} due {due}")
+    
+    lines.append("\nPlease generate an optimized study schedule using the given constraints.")
+    return "\n".join(lines)
+
+def call_openai_api(prompt: str) -> str:
+    """
+    Sends the formatted prompt to OpenAI and returns the raw response text.
+    """
+    client = OpenAI()  # Initialize OpenAI client
+
+    response = client.chat.completions.create(
+        model = "gpt-4",
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant that generates study schedules."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature = 0.7, # Adjust temperature for creativity vs. precision
+        max_tokens = 1000, # Limit response length
+        n = 1 # Number of responses to generate
+    )
+
+    return response.choices[0].message.content.strip()
