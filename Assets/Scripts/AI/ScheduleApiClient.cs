@@ -26,7 +26,7 @@ public class StudyRequest
     public string user_id;
     public int[] energy_level;
     public int pomodoro_length;
-    public TimeSlotData[] available_time_slots;
+    public TimeSlotData[] available_slots;
     public TaskData[] tasks;
 }
 
@@ -46,7 +46,7 @@ public class ScheduleApiClient : MonoBehaviour
             user_id = "unity_test_user",
             energy_level = new int[] { 3, 2 },
             pomodoro_length = 25,
-            available_time_slots = new TimeSlotData[]
+            available_slots = new TimeSlotData[]
             {
                 new TimeSlotData { start_time = DateTime.UtcNow.AddHours(1).ToString("o"), end_time = DateTime.UtcNow.AddHours(3).ToString("o") },
                 new TimeSlotData { start_time = DateTime.UtcNow.AddHours(4).ToString("o"), end_time = DateTime.UtcNow.AddHours(6).ToString("o") }
