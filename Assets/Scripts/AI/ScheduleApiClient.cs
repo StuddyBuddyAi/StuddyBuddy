@@ -102,7 +102,15 @@ public class ScheduleApiClient : MonoBehaviour
         }
         else
         {
-            Debug.Log("Response: " + www.downloadHandler.text);
+            string jsonResponse = www.downloadHandler.text;
+            ScheduleResponse schedule = JsonUtility.FromJson<ScheduleResponse>(jsonResponse);
+            Debug.Log("Parsed Schedule for: " + schedule.user_id);
+            Debug.Log("Total Sessions: " + schedule.sessions.Count);
+
+            foreach (var session in schedule.sessions)
+            {
+                Debug.Log($"Task: {session.task.title}, Start: {session.start_time}, End: {session.end_time}, Break After: {session.break_after} mins");
+            }
         }
     }
 }
