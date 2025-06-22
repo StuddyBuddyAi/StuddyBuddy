@@ -11,8 +11,9 @@ public class PingTester : MonoBehaviour
 
     IEnumerator PingServer()
     {
-        string url = "https://studybuddy-api-w8g5.onrender.com/ping";
+        string url = ApiConfig.GetFullUrl(ApiConfig.Endpoints.Ping);
         UnityWebRequest request = UnityWebRequest.Get(url);
+        request.timeout = 15; // Set a timeout for the request
 
         yield return request.SendWebRequest();
 

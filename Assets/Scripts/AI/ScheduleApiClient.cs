@@ -61,7 +61,7 @@ public class ScheduleResponse
 
 public class ScheduleApiClient : MonoBehaviour
 {
-    private const string API_URL = "https://studybuddy-api-w8g5.onrender.com/generate_ai_schedule";
+    private readonly string API_URL = ApiConfig.GetFullUrl(ApiConfig.Endpoints.GenerateSchedule);
 
     void Start()
     {
@@ -89,6 +89,7 @@ public class ScheduleApiClient : MonoBehaviour
 
         string json = JsonUtility.ToJson(request, true);
         UnityWebRequest www = new UnityWebRequest(API_URL, "POST");
+        www.timeout = 15; // Set a timeout for the request
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
         www.uploadHandler = new UploadHandlerRaw(bodyRaw);
         www.downloadHandler = new DownloadHandlerBuffer();
