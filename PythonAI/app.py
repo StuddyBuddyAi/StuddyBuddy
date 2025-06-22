@@ -36,7 +36,7 @@ def generate_ai_schedule(request: StudyRequest):
         gpt_response = call_openai_api(prompt)
 
         reference_date = request.available_slots[0].start_time.strftime("%Y-%m-%d")
-        sessions = parse_llm_response(gpt_response, reference_date)
+        sessions = parse_llm_response(gpt_response)
 
         total_study_time = sum([s.task.duration_minutes for s in sessions])
         total_break_time = sum([s.break_after for s in sessions if s.break_after])
