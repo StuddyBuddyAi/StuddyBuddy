@@ -1,7 +1,8 @@
-# test app.py
+# test app.py by running pytest test_app.py
 from fastapi.testclient import TestClient
 from app import app
 from datetime import datetime, timedelta
+from unittest.mock import patch
 
 client = TestClient(app)
 
@@ -134,3 +135,45 @@ def test_generate_ai_schedule_structure():
     assert all("task" in session for session in data["sessions"])
     assert all("start_time" in session for session in data["sessions"])
     assert all("end_time" in session for session in data["sessions"])
+
+def test_generate_ai_schedule_with_mock():
+    mock_response = [
+        {
+            "task": "Mocked Essay",
+            "start": "2025-06-11T10:00:00",
+            "end": "2025-06-11T10:30:00",
+            "category": "Mocking"
+        }
+    ]
+
+    request_data = {
+        "user_id": "mock_user",
+        "energy_level": [3],
+        "pomodoro_length": 25,
+        "available_slots": [
+            {
+                "start_time": "2025-06-11T10:00:00",
+                "end_time": "2025-06-11T12:00:00"
+            }
+        ],
+        "tasks": [
+            {
+                "title": "Mock Task",
+                "due_date": "2025-06-11T23:59:59",
+                "duration_minutes": 30,
+                "category": "Test"
+            }
+        ]
+    }
+
+    with patch("app.call_openai_api", return_value=mock_response):
+        response = client.post("/generate_ai_schedule/", json=request_data)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["user_id"] == "mock_user"
+    assert len(data["sessions"]) == 1
+    assert data["sessions"][0]["task"]["title"] == "Mocked Essay"
+    assert data["sessions"][0]["task"]["category"] == "Mocking"
+    assert data["sessions"][0]["start_time"] == "2025-06-11T10:00:00"
+    assert data["sessions"][0]["end_time"] == "2025-06-11T10:30:00"
+    assert data["success"] is True
