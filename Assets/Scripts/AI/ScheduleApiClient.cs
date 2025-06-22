@@ -57,6 +57,7 @@ public class ScheduleResponse
     public int total_break_time;
     public bool success;
     public string message;
+    public List<string> warnings;
 }
 
 public class ScheduleApiClient : MonoBehaviour
@@ -111,6 +112,14 @@ public class ScheduleApiClient : MonoBehaviour
             foreach (var session in schedule.sessions)
             {
                 Debug.Log($"Task: {session.task.title}, Start: {session.start_time}, End: {session.end_time}, Break After: {session.break_after} mins");
+            }
+
+            if (schedule.warnings != null && schedule.warnings.Count > 0)
+            {
+                foreach (var warning in schedule.warnings)
+                {
+                    Debug.LogWarning("⚠ Warning: " + warning);
+                }
             }
         }
     }
