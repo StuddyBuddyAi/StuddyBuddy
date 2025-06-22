@@ -13,7 +13,7 @@ public class PingTester : MonoBehaviour
     {
         string url = ApiConfig.GetFullUrl(ApiConfig.Endpoints.Ping);
         UnityWebRequest request = UnityWebRequest.Get(url);
-        request.timeout = 15; // Set a timeout for the request
+        request.timeout = 60; // Set a timeout for the request
 
         yield return request.SendWebRequest();
 

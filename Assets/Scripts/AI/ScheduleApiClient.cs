@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using TMPro;
 
 [Serializable]
 public class TaskData
@@ -62,6 +63,7 @@ public class ScheduleResponse
 
 public class ScheduleApiClient : MonoBehaviour
 {
+    public TextMeshProUGUI outputText;
     private readonly string API_URL = ApiConfig.GetFullUrl(ApiConfig.Endpoints.GenerateSchedule);
 
     public void SendMockScheduleRequest()
@@ -106,22 +108,33 @@ public class ScheduleApiClient : MonoBehaviour
         }
         else
         {
-            string jsonResponse = www.downloadHandler.text;
-            ScheduleResponse schedule = JsonUtility.FromJson<ScheduleResponse>(jsonResponse);
-            Debug.Log("Parsed Schedule for: " + schedule.user_id);
-            Debug.Log("Total Sessions: " + schedule.sessions.Count);
+            ScheduleResponse schedule = JsonUtility.FromJson<ScheduleResponse>(www.downloadHandler.text);
+
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.AppendLine($"Parsed Schedule for: {schedule.user_id}");
+            sb.AppendLine($"Total Sessions: {schedule.sessions.Count}");
 
             foreach (var session in schedule.sessions)
             {
-                Debug.Log($"Task: {session.task.title}, Start: {session.start_time}, End: {session.end_time}, Break After: {session.break_after} mins");
+                sb.AppendLine($"Task: {session.task.title}, Start: {session.start_time}, End: {session.end_time}, Break After: {session.break_after} minutes");
             }
 
             if (schedule.warnings != null && schedule.warnings.Count > 0)
             {
+                sb.AppendLine("\n⚠ Warnings:");
                 foreach (var warning in schedule.warnings)
                 {
-                    Debug.LogWarning("⚠ Warning: " + warning);
+                    sb.AppendLine($"• {warning}");
                 }
+            }
+
+            if (outputText != null)
+            {
+                outputText.text = sb.ToString(); // Display result in ScrollView
+            }
+            else
+            {
+                Debug.LogWarning("⚠ outputText is null. UI not updated.");
             }
         }
     }
