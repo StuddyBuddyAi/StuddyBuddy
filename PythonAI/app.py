@@ -2,6 +2,7 @@ import logging
 from fastapi import FastAPI, HTTPException
 from ai_model import generate_schedule, format_schedule_prompt, call_openai_api
 from models import StudyRequest, ScheduleResponse
+from utils import parse_llm_response
 
 logging.basicConfig(level=logging.INFO)
 
@@ -25,18 +26,28 @@ def schedule(request: StudyRequest):
         raise HTTPException(status_code=400, detail="Not enough energy for available time slots.")
     return generate_schedule(request)
 
-@app.post("/generate_ai_schedule/")
-def generate_ai_schedule_stub(request: StudyRequest):
+@app.post("/generate_ai_schedule/", response_model=ScheduleResponse)
+def generate_ai_schedule(request: StudyRequest):
     """
     Calls OpenAI API with a formatted schedule prompt and returns raw response text.
     """
     try:
         prompt = format_schedule_prompt(request)
         gpt_response = call_openai_api(prompt)
-        return {
-            "user_id": request.user_id,
-            "gpt_response": gpt_response,
-            "prompt_used": prompt, # for debugging
-        }
+
+        reference_date = request.available_slots[0].start_time.strftime("%Y-%m-%d")
+        sessions = parse_llm_response(gpt_response, reference_date)
+
+        total_study_time = sum([s.task.duration_minutes for s in sessions])
+        total_break_time = sum([s.break_after for s in sessions if s.break_after])
+
+        return ScheduleResponse(
+            user_id=request.user_id,
+            sessions=sessions,
+            total_study_time=total_study_time,
+            total_break_time=total_break_time,
+            success=True,
+            message="Schedule generated successfully."
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
