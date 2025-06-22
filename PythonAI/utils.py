@@ -1,8 +1,8 @@
 from typing import List
-from datetime import datetime, timedelta
+from datetime import datetime
 from models import Session, Task
 
-def parse_llm_response(text: str, reference_date: str, default_category: str = "General") -> List[Session]:
+def parse_llm_response(structured_response: List[dict]) -> List[Session]:
     """
     Parses raw LLM response into a list of Session objects.
     
@@ -16,33 +16,22 @@ def parse_llm_response(text: str, reference_date: str, default_category: str = "
     """
     sessions = []
 
-    lines = text.splitlines()
-    for line in lines:
-        if "AM" in line or "PM" in line:
-            try:
-                # Example line: - 10:00 AM - 10:25 AM: Write history essay [History]
-                time_part, task_part = line.split(":", 1)
-                times = time_part.strip("-• ").split(" - ")
-                task_title = task_part.split("[")[0].strip()
-                category = task_part.split("[")[-1].replace("]", "").strip() if "[" in task_part else default_category
-
-                start_dt = datetime.strptime(f"{reference_date} {times[0].strip()}", "%Y-%m-%d %I:%M %p")
-                end_dt = datetime.strptime(f"{reference_date} {times[1].strip()}", "%Y-%m-%d %I:%M %p")
-
-                task = Task(
-                    title=task_title,
-                    due_date=end_dt, # Assuming end date is the due date for now
-                    duration_minutes=int((end_dt - start_dt).total_seconds() / 60),
-                    category=category
-                )
-
-                sessions.append(Session(
-                    task=task,
-                    start_time=start_dt,
-                    end_time=end_dt,
-                    break_after=5
-                ))
-            except Exception as e:
-                print(f"Error parsing line: {line} -> {e}")
-                continue
+    for item in structured_response:
+        try:
+            task = Task(
+                title=item["task"],
+                due_date=datetime.fromisoformat(item["end"]), # Assuming end date is the due date for now
+                duration_minutes=int((datetime.fromisoformat(item["end"]) - datetime.fromisoformat(item["start"])).total_seconds() / 60),
+                category=item.get("category", "General")  # Default category if not specified
+            )
+            session = Session(
+                task=task,
+                start_time=datetime.fromisoformat(item["start"]),
+                end_time=datetime.fromisoformat(item["end"]),
+                break_after=item.get("break_after", 5)  # Default break after session in minutes
+            )
+            sessions.append(session)
+        except Exception as e:
+            print(f"[ERROR] Skipping item due to parse failure: {e}")
+            continue
     return sessions
