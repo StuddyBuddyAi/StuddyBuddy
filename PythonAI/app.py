@@ -41,6 +41,7 @@ def generate_ai_schedule(request: StudyRequest):
         total_study_time = sum([s.task.duration_minutes for s in sessions])
         total_break_time = sum([s.break_after for s in sessions if s.break_after])
 
+        logging.info(f"Generated {len(sessions)} AI sessions for user {request.user_id}.")
         return ScheduleResponse(
             user_id=request.user_id,
             sessions=sessions,
