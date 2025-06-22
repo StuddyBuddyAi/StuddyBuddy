@@ -1,9 +1,10 @@
-import os
+import json
+import re
 from openai import OpenAI
 from dotenv import load_dotenv
-from datetime import datetime, timedelta
+from datetime import timedelta
 from typing import List
-from models import Task, TimeSlot, StudyRequest, Session, ScheduleResponse
+from models import StudyRequest, Session, ScheduleResponse
 
 load_dotenv()  # Load environment variables from .env file
 
@@ -87,7 +88,7 @@ def format_schedule_prompt(request: StudyRequest) -> str:
                  """)
     return "\n".join(lines)
 
-def call_openai_api(prompt: str) -> str:
+def call_openai_api(prompt: str) -> List[dict]:
     """
     Sends the formatted prompt to OpenAI and returns the raw response text.
     """
@@ -103,5 +104,12 @@ def call_openai_api(prompt: str) -> str:
         max_tokens = 1000, # Limit response length
         n = 1 # Number of responses to generate
     )
+    text = response.choices[0].message.content.strip()
 
-    return response.choices[0].message.content.strip()
+    # Extract JSON array from the response using regex (to avoid markdown formatting or text before/after)
+    try:
+        json_str = re.search(r"\[.*\]", text, re.DOTALL).group(0)
+        return json.loads(json_str)
+    except Exception as e:
+        print(f"[ERROR] Failed to parse LLM response as JSON: {e}")
+        return []
