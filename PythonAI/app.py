@@ -43,6 +43,14 @@ def generate_ai_schedule(request: StudyRequest):
         total_study_time = sum([s.task.duration_minutes for s in sessions])
         total_break_time = sum([s.break_after for s in sessions if s.break_after])
 
+        # Compare scheduled vs original tasks
+        scheduled_tasks = {s.task.title for s in sessions}
+        original_tasks = request.tasks
+        unscheduled_tasks = [t for t in original_tasks if t.title not in scheduled_tasks]
+        warnings = [
+            f"ChatGPT did not include task '{task.title}' (due {task.due_date.strftime('%Y-%m-%d %H:%M')}) in the generated schedule." for task in unscheduled_tasks
+        ]
+
         logging.info(f"Generated {len(sessions)} AI sessions for user {request.user_id}.")
         if sessions:
             logging.debug(f"First session: {sessions[0]!r}")
@@ -52,8 +60,9 @@ def generate_ai_schedule(request: StudyRequest):
             sessions=sessions,
             total_study_time=total_study_time,
             total_break_time=total_break_time,
-            success=True,
-            message="Schedule generated successfully."
+            success=len(unscheduled_tasks) == 0,
+            message="Schedule generated successfully." if not unscheduled_tasks else "Some tasks could not be scheduled due to time constraints.",
+            warnings=warnings
         )
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=f"Invalid response format: {ve}")
