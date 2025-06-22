@@ -73,3 +73,4 @@ class ScheduleResponse(BaseModel):
     total_break_time: int
     success: bool = True
     message: Optional[str] = None
+    Warnings: Optional[List[str]] = []
