@@ -11,7 +11,7 @@ public class PingTester : MonoBehaviour
 
     IEnumerator PingServer()
     {
-        string url = "http://localhost:8000/ping";
+        string url = "https://studybuddy-api.onrender.com/ping";
         UnityWebRequest request = UnityWebRequest.Get(url);
 
         yield return request.SendWebRequest();
