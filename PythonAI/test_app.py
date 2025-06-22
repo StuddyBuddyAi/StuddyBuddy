@@ -95,3 +95,42 @@ def test_generate_schedule_not_enough_energy():
     response = client.post("/generate_schedule", json=request_data)
     assert response.status_code == 400
     assert response.json()["detail"] == "Not enough energy for available time slots."
+
+def test_generate_ai_schedule_structure():
+    response = client.post("/generate_ai_schedule/", json={
+        "user_id": "test_user_4",
+        "energy_level": [3, 2],
+        "pomodoro_length": 25,
+        "available_slots": [
+            {
+                "start_time": "2025-06-11T10:00:00",
+                "end_time": "2025-06-11T12:00:00"
+            },
+            {
+                "start_time": "2025-06-11T14:00:00",
+                "end_time": "2025-06-11T16:00:00"
+            }
+        ],
+        "tasks": [
+            {
+                "title": "Write history essay",
+                "due_date": "2025-06-12T23:59:59",
+                "duration_minutes": 60,
+                "category": "History"
+            },
+            {
+                "title": "Review math notes",
+                "due_date": "2025-06-12T23:59:59",
+                "duration_minutes": 45,
+                "category": "Math"
+            }
+        ]
+    })
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["user_id"] == "test_user_4"
+    assert len(data["sessions"]) > 0
+    assert all("task" in session for session in data["sessions"])
+    assert all("start_time" in session for session in data["sessions"])
+    assert all("end_time" in session for session in data["sessions"])
