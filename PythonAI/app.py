@@ -49,5 +49,7 @@ def generate_ai_schedule(request: StudyRequest):
             success=True,
             message="Schedule generated successfully."
         )
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=f"Invalid response format: {ve}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
