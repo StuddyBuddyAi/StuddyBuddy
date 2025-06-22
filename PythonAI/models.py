@@ -9,58 +9,67 @@ class Task(BaseModel):
     duration_minutes: int
     category: Optional[str] = None
 
+    def __repr__(self):
+        return f"Task(title={self.title}, duration={self.duration_minutes} min, due={self.due_date()}, category={self.category})"
+
 class TimeSlot(BaseModel):
     """Represents an available block of time for scheduling study sessions."""
     start_time: datetime
     end_time: datetime
 
+    def __repr__(self):
+        return f"TimeSlot({self.start_time.strftime('%H:%M')} - {self.end_time.strftime('%H:%M')})"
+
 class StudyRequest(BaseModel):
     """
-    Input payload for scheduling.
+    The payload for both rule-based and AI-based scheduling requests.
 
-    Attributes:
-        user_id: Identifier for the student or user.
-        energy_level: A list representing energy values for each corresponding time slot.
+    Fields:
+        user_id: Identifier for the student.
+        energy_level: One value per available time slot, representing the user's energy level (1-3 scale).
         pomodoro_length: Preferred study block length in minutes (default: 25).
-        available_slots: Time windows the user is free to study.
+        available_slots: Time windows the user is available to study.
         tasks: List of tasks to schedule.
     """
     user_id: str
-    energy_level: List[int]  # Energy levels for each time slot, e.g., [1, 2, 3]
-    pomodoro_length: Optional[int] = 25  # Default Pomodoro length in minutes
-    available_slots: List[TimeSlot]  # Available time slots for study
-    tasks: List[Task]  # List of tasks with deadlines and durations
+    energy_level: List[int]
+    pomodoro_length: Optional[int] = 25
+    available_slots: List[TimeSlot]
+    tasks: List[Task]
 
 class Session(BaseModel):
     """
-    Represents a scheduled study session.
+    Represents a single scheduled study block.
 
-    Attributes:
-        task: The task being studied during the session.
-        start_time: When the session starts.
-        end_time: When the session ends.
+    Fields:
+        task: Task associated with this session.
+        start_time: Start timestamp of the session.
+        end_time: End timestamp of the session.
         break_after: Suggested break duration after the session in minutes.
     """
     task: Task
     start_time: datetime
     end_time: datetime
-    break_after: Optional[int] = 5  # Default break after the session in minutes
+    break_after: Optional[int] = 5 # Default break time after each session in minutes
+
+    def __repr__(self):
+        return f"Session(task={self.task.title}, start={self.start_time.strftime('%H:%M')}, end={self.end_time.strftime('%H:%M')}, break_after={self.break_after} min)"
 
 class ScheduleResponse(BaseModel):
     """
-    Output model returned by the scheduling API.
+    Response returned to the frontend after scheduling generation.
 
-    Attributes:
-        user_id: The ID of the user the schedule was generated for.
+    Fields:
+        user_id: User receiving the schedule.
         sessions: List of scheduled study sessions.
         total_study_time: Sum of all study durations in minutes.
         total_break_time: Sum of all break times in minutes.
-        success: Whether all tasks were successfully scheduled.
+        success: True if all tasks were successfully scheduled.
         message: Additional info or error message.
     """
     user_id: str
-    sessions: List[Session]  # List of scheduled study sessions
-    total_study_time: int  # Total study time in minutes
-    total_break_time: int  # Total break time in minutes
-    success: bool = True  # Indicates if the schedule was successfully created
-    message: Optional[str] = None  # Additional message or error description
+    sessions: List[Session]
+    total_study_time: int
+    total_break_time: int
+    success: bool = True
+    message: Optional[str] = None
