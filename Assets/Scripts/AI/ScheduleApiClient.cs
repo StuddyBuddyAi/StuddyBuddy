@@ -64,12 +64,12 @@ public class ScheduleApiClient : MonoBehaviour
 {
     private readonly string API_URL = ApiConfig.GetFullUrl(ApiConfig.Endpoints.GenerateSchedule);
 
-    void Start()
+    public void SendMockScheduleRequest()
     {
-        StartCoroutine(SendMockScheduleRequest());
+        StartCoroutine(RunScheduleRequest());
     }
 
-    IEnumerator SendMockScheduleRequest()
+    private IEnumerator RunScheduleRequest()
     {
         StudyRequest request = new StudyRequest
         {
@@ -96,6 +96,8 @@ public class ScheduleApiClient : MonoBehaviour
         www.downloadHandler = new DownloadHandlerBuffer();
         www.SetRequestHeader("Content-Type", "application/json");
 
+        Debug.Log("Sending POST request to: " + API_URL);
+        Debug.Log("Request JSON: " + json);
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
