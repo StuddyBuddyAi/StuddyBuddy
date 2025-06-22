@@ -97,6 +97,36 @@ def test_generate_schedule_not_enough_energy():
     assert response.status_code == 400
     assert response.json()["detail"] == "Not enough energy for available time slots."
 
+def test_generate_schedule_with_unschedulable_task():
+    now = datetime.now()
+    request_data = {
+        "user_id": "test_unshedulable_user",
+        "energy_level": [3],
+        "pomodoro_length": 25,
+        "available_slots": [
+            {
+                "start_time": (now + timedelta(hours=1)).isoformat(),
+                "end_time": (now + timedelta(hours=2)).isoformat()
+            }
+        ],
+        "tasks": [
+            {
+                "title": "Big Task",
+                "due_date": (now + timedelta(days=1)).isoformat(),
+                "duration_minutes": 120,  # Longer than the available slot
+                "category": "Overflow"
+            }
+        ]
+    }
+
+    response = client.post("/generate_schedule", json=request_data)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is False
+    assert "warnings" in data
+    assert len(data["warnings"]) == 1
+    assert "Big Task" in data["warnings"][0]
+
 def test_generate_ai_schedule_structure():
     response = client.post("/generate_ai_schedule/", json={
         "user_id": "test_user_4",
