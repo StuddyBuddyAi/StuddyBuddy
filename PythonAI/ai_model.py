@@ -11,6 +11,7 @@ load_dotenv()  # Load environment variables from .env file
 def generate_schedule(request: StudyRequest) -> ScheduleResponse:
     sessions: List[Session] = []
     remaining_tasks = sorted(request.tasks, key=lambda t: t.due_date) # Sort tasks by due date
+    unscheduled_tasks = []
     break_after = 5 # Default break after the session in minutes
     total_study_time = 0
     total_break_time = 0
@@ -46,13 +47,20 @@ def generate_schedule(request: StudyRequest) -> ScheduleResponse:
 
         slot_index += 1
     
+    # If there are still remaining tasks that couldn't be scheduled
+    unscheduled_tasks.extend(remaining_tasks)
+    warning_messages = [
+        f"Unable to schedule task '{task.title}' before its duedate of {task.due_date.strftime("%Y-%m-%d %H:%M")}." for task in unscheduled_tasks
+    ]
+    
     return ScheduleResponse(
         user_id=request.user_id,
         sessions=sessions,
         total_study_time=total_study_time,
         total_break_time=total_break_time,
-        success=len(remaining_tasks) == 0,
-        message="All tasks scheduled successfully." if not remaining_tasks else "Some tasks could not be scheduled due to time constraints."
+        success=len(unscheduled_tasks) == 0,
+        message="All tasks scheduled successfully." if not unscheduled_tasks else "Some tasks could not be scheduled due to time constraints.",
+        warnings=warning_messages
     )
 
 def format_schedule_prompt(request: StudyRequest) -> str:
