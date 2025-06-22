@@ -61,7 +61,7 @@ public class ScheduleResponse
 
 public class ScheduleApiClient : MonoBehaviour
 {
-    private const string API_URL = "https://studybuddy-api.onrender.com/generate_ai_schedule/";
+    private const string API_URL = "https://studybuddy-api-w8g5.onrender.com/generate_ai_schedule";
 
     void Start()
     {

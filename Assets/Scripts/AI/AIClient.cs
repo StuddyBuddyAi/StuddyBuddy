@@ -6,7 +6,7 @@ public class AIClient : MonoBehaviour
 {
     public IEnumerator GetSchedule(string jsonPayload)
     {
-        UnityWebRequest request = new UnityWebRequest("https://studybuddy-api.onrender.com/generate_ai_schedule/", "POST");
+        UnityWebRequest request = new UnityWebRequest("https://studybuddy-api-w8g5.onrender.com/generate_ai_schedule", "POST");
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonPayload);
         request.uploadHandler = new UploadHandlerRaw(bodyRaw);
         request.downloadHandler = new DownloadHandlerBuffer();
