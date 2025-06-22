@@ -4,7 +4,7 @@ from ai_model import generate_schedule, format_schedule_prompt, call_openai_api
 from models import StudyRequest, ScheduleResponse
 from utils import parse_llm_response
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 app = FastAPI()
 
@@ -42,6 +42,9 @@ def generate_ai_schedule(request: StudyRequest):
         total_break_time = sum([s.break_after for s in sessions if s.break_after])
 
         logging.info(f"Generated {len(sessions)} AI sessions for user {request.user_id}.")
+        if sessions:
+            logging.debug(f"First session: {sessions[0]!r}")
+            logging.debug(f"All sessions: {sessions!r}")
         return ScheduleResponse(
             user_id=request.user_id,
             sessions=sessions,
