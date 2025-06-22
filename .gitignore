@@ -75,3 +75,18 @@ PythonAI/venv/
 
 # Environment variables for backend
 PythonAI/.env
+
+# Python cache and build artifacts
+PythonAI/__pycache__/
+PythonAI/*.py[cod]
+PythonAI/.pytest_cache/
+PythonAI/.mypy_cache/
+PythonAI/*.pyo
+PythonAI/*.pyd
+PythonAI/*.pdb
+PythonAI/.runtime
+PythonAI/.reload
+
+# Editor-specific settings (optional but useful if you're using these tools)
+.vscode/
+.idea/
