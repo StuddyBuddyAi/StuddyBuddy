@@ -74,6 +74,17 @@ def format_schedule_prompt(request: StudyRequest) -> str:
         lines.append(f"- {task.title}{category}, {task.duration_minutes} due {due}")
     
     lines.append("\nPlease generate an optimized study schedule using the given constraints.")
+    lines.append("Repond with ONLY a plain JSON array in the following format (do not use markdown):")
+    lines.append("""
+[
+    {
+        "task": "Write history essay",
+        "start": "2025-06-11T10:00:00",
+        "end": "2025-06-11T10:25:00",
+        "category": "History",
+    }
+]
+                 """)
     return "\n".join(lines)
 
 def call_openai_api(prompt: str) -> str:
