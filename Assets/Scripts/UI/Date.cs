@@ -11,8 +11,8 @@ public class Date : MonoBehaviour
     void Start()
     {
 
-        string date = System.DateTime.UtcNow.ToLocalTime().ToString("ddd, MMM dd, yyyy");
-        print(date);
+        string date = System.DateTime.Now.ToLocalTime().ToString("ddd, MMM dd, yyyy");
+        
         largeText.text = date;
 
     }
