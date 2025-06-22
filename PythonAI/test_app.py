@@ -177,3 +177,31 @@ def test_generate_ai_schedule_with_mock():
     assert data["sessions"][0]["start_time"] == "2025-06-11T10:00:00"
     assert data["sessions"][0]["end_time"] == "2025-06-11T10:30:00"
     assert data["success"] is True
+
+def test_generate_ai_schedule_with_malformed_llm_response():
+    bad_response = "This is now a string, not a valid JSON response."
+
+    request_data = {
+        "user_id": "bad_response_user",
+        "energy_level": [3],
+        "pomodoro_length": 25,
+        "available_slots": [
+            {
+                "start_time": "2025-06-11T10:00:00",
+                "end_time": "2025-06-11T12:00:00"
+            }
+        ],
+        "tasks": [
+            {
+                "title": "Malformed Task",
+                "due_date": "2025-06-11T23:59:59",
+                "duration_minutes": 30,
+                "category": "Broken"
+            }
+        ]
+    }
+
+    with patch("app.call_openai_api", return_value=bad_response):
+        response = client.post("/generate_ai_schedule/", json=request_data)
+    assert response.status_code == 500 or response.status_code == 400
+    assert "Invalid response format from OpenAI API. Expected a list of session dictionaries." in response.json()["detail"]

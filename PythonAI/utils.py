@@ -1,3 +1,4 @@
+import logging
 from typing import List
 from datetime import datetime
 from models import Session, Task
@@ -32,6 +33,6 @@ def parse_llm_response(structured_response: List[dict]) -> List[Session]:
             )
             sessions.append(session)
         except Exception as e:
-            print(f"[ERROR] Skipping item due to parse failure: {e}")
+            logging.getLogger(__name__).error(f"Skipping item due to parse failure: {e}")
             continue
     return sessions

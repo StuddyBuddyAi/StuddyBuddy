@@ -35,7 +35,9 @@ def generate_ai_schedule(request: StudyRequest):
         prompt = format_schedule_prompt(request)
         gpt_response = call_openai_api(prompt)
 
-        reference_date = request.available_slots[0].start_time.strftime("%Y-%m-%d")
+        if not isinstance(gpt_response, list) or not all(isinstance(item, dict) for item in gpt_response):
+            raise ValueError("Invalid response format from OpenAI API. Expected a list of session dictionaries.")
+
         sessions = parse_llm_response(gpt_response)
 
         total_study_time = sum([s.task.duration_minutes for s in sessions])
