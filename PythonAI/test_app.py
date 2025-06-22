@@ -188,7 +188,7 @@ def test_generate_ai_schedule_with_mock():
         ],
         "tasks": [
             {
-                "title": "Mock Task",
+                "title": "Mocked Essay",
                 "due_date": "2025-06-11T23:59:59",
                 "duration_minutes": 30,
                 "category": "Test"
@@ -235,3 +235,48 @@ def test_generate_ai_schedule_with_malformed_llm_response():
         response = client.post("/generate_ai_schedule/", json=request_data)
     assert response.status_code == 500 or response.status_code == 400
     assert "Invalid response format from OpenAI API. Expected a list of session dictionaries." in response.json()["detail"]
+
+def test_generate_ai_schedule_with_unschedulable_task():
+    mock_response = [
+        {
+            "task": "First Task",
+            "start": "2025-06-11T10:00:00",
+            "end": "2025-06-11T10:25:00",
+            "category": "First"
+        }
+    ]
+
+    request_data = {
+        "user_id": "test_unschedulable_user_2",
+        "energy_level": [3],
+        "pomodoro_length": 25,
+        "available_slots": [
+            {
+                "start_time": "2025-06-11T10:00:00",
+                "end_time": "2025-06-11T12:00:00"
+            }
+        ],
+        "tasks": [
+            {
+                "title": "First Task",
+                "due_date": "2025-06-11T23:59:59",
+                "duration_minutes": 25,
+                "category": "First"
+            },
+            {
+                "title": "Skipped Task",
+                "due_date": "2025-06-11T23:59:59",
+                "duration_minutes": 30,
+                "category": "Skipped"
+            }
+        ]
+    }
+
+    with patch("app.call_openai_api", return_value=mock_response):
+        response = client.post("/generate_ai_schedule/", json=request_data)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is False
+    assert "warnings" in data
+    assert len(data["warnings"]) == 1
+    assert "Skipped Task" in data["warnings"][0]
