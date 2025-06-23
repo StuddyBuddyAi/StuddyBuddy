@@ -319,3 +319,37 @@ def test_schedule_respects_energy_levels():
         datetime.fromisoformat(data["sessions"][0]["start_time"])
     ).seconds / 60
     assert actual_duration < 60  # Task was scaled down
+
+def test_ai_schedule_fallback_to_rule_based():
+    now = datetime.now()
+    request_data = {
+        "user_id": "fallback_test_user",
+        "energy_level": [2],
+        "pomodoro_length": 25,
+        "available_slots": [
+            {
+                "start_time": (now + timedelta(minutes=10)).isoformat(),
+                "end_time": (now + timedelta(minutes=90)).isoformat()
+            }
+        ],
+        "tasks": [
+            {
+                "title": "Fallback Task",
+                "due_date": (now + timedelta(days=1)).isoformat(),
+                "duration_minutes": 60,
+                "category": "Fallback"
+            }
+        ]
+    }
+
+    # Force call_openai_api to raise an Exception
+    with patch("app.call_openai_api", side_effect=Exception("Simulated API failure")):
+        response = client.post("/generate_ai_schedule/", json=request_data)
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["user_id"] == "fallback_test_user"
+    assert len(data["sessions"]) == 1
+    assert data["sessions"][0]["task"]["title"] == "Fallback Task"
+    assert "fallback" in data["warnings"][0].lower()
+    assert data["success"] is False
