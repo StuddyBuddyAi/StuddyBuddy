@@ -67,4 +67,9 @@ def generate_ai_schedule(request: StudyRequest):
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=f"Invalid response format: {ve}")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logging.warning(f"AI scheduling failed: {e}. Falling back to rule-based scheduling.")
+        fallback_response = generate_schedule(request)
+        fallback_response.warnings.append(f"AI scheduling failed: {e}. Fallback to rule-based scheduling used.")
+        fallback_response.message = "AI scheduling failed. Rule-based scheduling used instead."
+        fallback_response.success = False # Fallback implies partial failure
+        return fallback_response
