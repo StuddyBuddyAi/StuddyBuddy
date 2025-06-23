@@ -345,7 +345,7 @@ def test_ai_schedule_fallback_to_rule_based():
     # Force call_openai_api to raise an Exception
     with patch("app.call_openai_api", side_effect=Exception("Simulated API failure")):
         response = client.post("/generate_ai_schedule/", json=request_data)
-
+    assert "fallback" in data["warnings"][0].lower()
     assert response.status_code == 200
     data = response.json()
     assert data["user_id"] == "fallback_test_user"
