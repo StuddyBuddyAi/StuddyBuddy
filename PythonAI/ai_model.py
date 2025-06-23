@@ -24,7 +24,10 @@ def generate_schedule(request: StudyRequest) -> ScheduleResponse:
 
         while remaining_tasks and slot_start < slot_end:
             task = remaining_tasks[0]
-            task_duration = timedelta(minutes=task.duration_minutes)
+            energy = request.energy_level[slot_index] # 1 = low, 2 = medium, 3 = high
+            multiplier = {1: 1.25, 2: 1.0, 3: 0.75}.get(energy, 1.0) # task duration increases with lower energy and increases with higher energy
+            adjusted_duration_minutes = int(task.duration_minutes * multiplier)
+            task_duration = timedelta(minutes=adjusted_duration_minutes)
 
             # Check if the task fits in the current time slot
             if slot_start + task_duration <= slot_end:
@@ -35,7 +38,7 @@ def generate_schedule(request: StudyRequest) -> ScheduleResponse:
                     break_after=break_after
                 )
                 sessions.append(session)
-                total_study_time += task.duration_minutes
+                total_study_time += adjusted_duration_minutes
                 total_break_time += break_after
                 slot_start += task_duration + timedelta(minutes=break_after)
 
