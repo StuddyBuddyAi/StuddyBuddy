@@ -41,11 +41,18 @@ def test_generate_schedule_success():
     response = client.post("/generate_schedule", json=request_data)
     assert response.status_code == 200
     data = response.json()
+    print("Scheduled durations:", [(
+        s["task"]["title"],
+        datetime.fromisoformat(s["end_time"]) - datetime.fromisoformat(s["start_time"])
+        ) for s in data["sessions"]])
     assert data["user_id"] == "test_user_1"
     assert data["sessions"][0]["task"]["title"] == "Write essay"
     assert data["sessions"][1]["task"]["title"] == "Study math"
     assert len(data["sessions"]) == 2
-    assert data["total_study_time"] >= 105
+    expected_total_study_time = sum([
+        (datetime.fromisoformat(s["end_time"]) - datetime.fromisoformat(s["start_time"])).seconds / 60 for s in data["sessions"]
+    ])
+    assert data["total_study_time"] == expected_total_study_time
     assert data["success"] is True
 
 def test_generate_schedule_missing_tasks():
@@ -280,3 +287,35 @@ def test_generate_ai_schedule_with_unschedulable_task():
     assert "warnings" in data
     assert len(data["warnings"]) == 1
     assert "Skipped Task" in data["warnings"][0]
+
+def test_schedule_respects_energy_levels():
+    now = datetime.now()
+    request_data = {
+        "user_id": "energy_test_user",
+        "energy_level": [3],  # High energy
+        "pomodoro_length": 25,
+        "available_slots": [
+            {
+                "start_time": (now + timedelta(minutes=10)).isoformat(),
+                "end_time": (now + timedelta(minutes=70)).isoformat()
+            }
+        ],
+        "tasks": [
+            {
+                "title": "Speedy Task",
+                "due_date": (now + timedelta(days=1)).isoformat(),
+                "duration_minutes": 60,
+                "category": "Testing"
+            }
+        ]
+    }
+
+    response = client.post("/generate_schedule", json=request_data)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    actual_duration = (
+        datetime.fromisoformat(data["sessions"][0]["end_time"]) -
+        datetime.fromisoformat(data["sessions"][0]["start_time"])
+    ).seconds / 60
+    assert actual_duration < 60  # Task was scaled down

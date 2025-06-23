@@ -26,7 +26,7 @@ def generate_schedule(request: StudyRequest) -> ScheduleResponse:
             task = remaining_tasks[0]
             energy = request.energy_level[slot_index] # 1 = low, 2 = medium, 3 = high
             multiplier = {1: 1.25, 2: 1.0, 3: 0.75}.get(energy, 1.0) # task duration increases with lower energy and increases with higher energy
-            adjusted_duration_minutes = int(task.duration_minutes * multiplier)
+            adjusted_duration_minutes = round(task.duration_minutes * multiplier)
             task_duration = timedelta(minutes=adjusted_duration_minutes)
 
             # Check if the task fits in the current time slot
