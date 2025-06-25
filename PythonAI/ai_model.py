@@ -4,7 +4,7 @@ import time
 import openai
 import asyncio
 import logging
-from openai import OpenAI, OpenAIError
+from openai import AsyncOpenAI
 from dotenv import load_dotenv
 from datetime import timedelta
 from typing import List
@@ -107,7 +107,7 @@ async def call_openai_api(prompt: str, max_retries: int = 3, delay: float = 2.0)
     """
     Calls OpenAI with retry logic on timeout and parses JSON from the response.
     """
-    client = OpenAI()  # Initialize OpenAI client
+    client = AsyncOpenAI()  # Initialize OpenAI client
 
     for attempt in range(max_retries):
         try:
