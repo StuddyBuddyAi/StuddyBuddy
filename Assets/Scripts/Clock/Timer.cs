@@ -8,6 +8,21 @@ public class TimerController : MonoBehaviour
     private float countdown = 0f;
     private bool isRunning = false;
     private int lastDisplayedSeconds = -1;
+    private bool hasPlayedSound = false;
+
+    public AudioClip timerEndSound;
+    private AudioSource audioSource;
+
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource != null && timerEndSound != null)
+        {
+            audioSource.clip = timerEndSound;
+        }
+
+        UpdateDisplay();
+    }
 
     void Update()
     {
@@ -25,6 +40,11 @@ public class TimerController : MonoBehaviour
                 {
                     totalSeconds = 0;
                     isRunning = false;
+                    if (!hasPlayedSound)
+                    {
+                        PlayTimerEndSound();
+                        hasPlayedSound = true;
+                    }
                 }
 
                 UpdateDisplay();
@@ -35,6 +55,7 @@ public class TimerController : MonoBehaviour
     public void AddSeconds(int amount)
     {
         totalSeconds = Mathf.Max(0, totalSeconds + amount);
+        hasPlayedSound = false;
         UpdateDisplay();
     }
 
@@ -60,6 +81,14 @@ public class TimerController : MonoBehaviour
             int seconds = totalSeconds % 60;
             timerDisplay.text = $"{hours:00}:{minutes:00}:{seconds:00}";
             lastDisplayedSeconds = totalSeconds;
+        }
+    }
+
+    void PlayTimerEndSound()
+    {
+        if (timerEndSound != null && audioSource != null)
+        {
+            audioSource.Play();
         }
     }
 }
