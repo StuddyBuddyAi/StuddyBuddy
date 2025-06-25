@@ -92,7 +92,7 @@ public class ScheduleApiClient : MonoBehaviour
 
         string json = JsonUtility.ToJson(request, true);
         UnityWebRequest www = new UnityWebRequest(API_URL, "POST");
-        www.timeout = 15; // Set a timeout for the request
+        www.timeout = 45; // Set a timeout for the request
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
         www.uploadHandler = new UploadHandlerRaw(bodyRaw);
         www.downloadHandler = new DownloadHandlerBuffer();

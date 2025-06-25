@@ -8,7 +8,7 @@ public class AIClient : MonoBehaviour
     {
         string url = ApiConfig.GetFullUrl(ApiConfig.Endpoints.GenerateSchedule);
         UnityWebRequest request = new UnityWebRequest(url, "POST");
-        request.timeout = 15; // Set a timeout for the request
+        request.timeout = 45; // Set a timeout for the request
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonPayload);
         request.uploadHandler = new UploadHandlerRaw(bodyRaw);
         request.downloadHandler = new DownloadHandlerBuffer();

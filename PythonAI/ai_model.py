@@ -2,6 +2,7 @@ import json
 import re
 import time
 import openai
+import asyncio
 from openai import OpenAI, OpenAIError
 from dotenv import load_dotenv
 from datetime import timedelta
@@ -101,7 +102,7 @@ def format_schedule_prompt(request: StudyRequest) -> str:
                  """)
     return "\n".join(lines)
 
-def call_openai_api(prompt: str, max_retries: int = 3, delay: float = 2.0) -> List[dict]:
+async def call_openai_api(prompt: str, max_retries: int = 3, delay: float = 2.0) -> List[dict]:
     """
     Calls OpenAI with retry logic on timeout and parses JSON from the response.
     """
@@ -109,15 +110,18 @@ def call_openai_api(prompt: str, max_retries: int = 3, delay: float = 2.0) -> Li
 
     for attempt in range(max_retries):
         try:
-            response = client.chat.completions.create(
-                model = "gpt-4",
-                messages = [
-                    {"role": "system", "content": "You are a helpful assistant that generates study schedules."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature = 0.7, # Adjust temperature for creativity vs. precision
-                max_tokens = 1000, # Limit response length
-                n = 1 # Number of responses to generate
+            response = await asyncio.wait_for(
+                client.chat.completions.create(
+                    model = "gpt-4",
+                    messages = [
+                        {"role": "system", "content": "You are a helpful assistant that generates study schedules."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    temperature = 0.7, # Adjust temperature for creativity vs. precision
+                    max_tokens = 1000, # Limit response length
+                    n = 1 # Number of responses to generate
+                ),
+                timeout=30.0 # Timeout for the API call in seconds
             )
             text = response.choices[0].message.content.strip()
             json_str = re.search(r"\[.*\]", text, re.DOTALL).group(0)
