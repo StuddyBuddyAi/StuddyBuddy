@@ -33,13 +33,23 @@ async def generate_ai_schedule(request: StudyRequest):
     Calls OpenAI API with a formatted schedule prompt and returns raw response text.
     """
     try:
+        logging.info(f"[START] /generate_ai_schedule for user_id={request.user_id}")
+        logging.debug(f"Request JSON: {request.model_dump_json()}")
+
         prompt = format_schedule_prompt(request)
+        logging.debug(f"Formatted prompt:\n{prompt}")
+
+        logging.info("[CALLING] OpenAI API")
         gpt_response = await call_openai_api(prompt)
+        logging.info("[SUCCESS] OpenAI API responded")
+
+        logging.debug(f"Raw GPT response: {gpt_response}")
 
         if not isinstance(gpt_response, list) or not all(isinstance(item, dict) for item in gpt_response):
             raise ValueError("Invalid response format from OpenAI API. Expected a list of session dictionaries.")
 
         sessions = parse_llm_response(gpt_response)
+        logging.info(f"Parsed {len(sessions)} sessions from GPT response")
 
         total_study_time = sum([s.task.duration_minutes for s in sessions])
         total_break_time = sum([s.break_after for s in sessions if s.break_after])
@@ -52,7 +62,8 @@ async def generate_ai_schedule(request: StudyRequest):
             f"ChatGPT did not include task '{task.title}' (due {task.due_date.strftime('%Y-%m-%d %H:%M')}) in the generated schedule." for task in unscheduled_tasks
         ]
 
-        logging.info(f"Generated {len(sessions)} AI sessions for user {request.user_id}.")
+        logging.info(f"[DONE] Schedule generated with {len(warnings)} warnings")
+
         if sessions:
             logging.debug(f"First session: {sessions[0]!r}")
             logging.debug(f"All sessions: {sessions!r}")
@@ -66,9 +77,11 @@ async def generate_ai_schedule(request: StudyRequest):
             warnings=warnings
         )
     except ValueError as ve:
+        logging.exception("[ERROR] ValueError from GPT response")
         raise HTTPException(status_code=400, detail=f"Invalid response format: {ve}")
+    
     except Exception as e:
-        logging.warning(f"AI scheduling failed: {e}. Falling back to rule-based scheduling.")
+        logging.warning(f"[FALLBACK] AI scheduling failed: {e}. Using rule-based scheduling.")
         fallback_response = generate_schedule(request)
         fallback_response.warnings.append(f"AI scheduling failed: {e}. Fallback to rule-based scheduling used.")
         fallback_response.message = "AI scheduling failed. Rule-based scheduling used instead."

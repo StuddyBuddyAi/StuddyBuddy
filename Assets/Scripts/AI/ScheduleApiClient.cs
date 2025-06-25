@@ -105,6 +105,7 @@ public class ScheduleApiClient : MonoBehaviour
         if (www.result != UnityWebRequest.Result.Success)
         {
             Debug.LogError("Error: " + www.error);
+            Debug.LogError("Response Text: " + www.downloadHandler.text);
         }
         else
         {
