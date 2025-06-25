@@ -11,8 +11,9 @@ public class PingTester : MonoBehaviour
 
     IEnumerator PingServer()
     {
-        string url = "http://localhost:8000/ping";
+        string url = ApiConfig.GetFullUrl(ApiConfig.Endpoints.Ping);
         UnityWebRequest request = UnityWebRequest.Get(url);
+        request.timeout = 60; // Set a timeout for the request
 
         yield return request.SendWebRequest();
 

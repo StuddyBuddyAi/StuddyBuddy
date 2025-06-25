@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using TMPro;
 
 [Serializable]
 public class TaskData
@@ -57,18 +58,20 @@ public class ScheduleResponse
     public int total_break_time;
     public bool success;
     public string message;
+    public List<string> warnings;
 }
 
 public class ScheduleApiClient : MonoBehaviour
 {
-    private const string API_URL = "http://127.0.0.1:8000/generate_schedule";
+    public TextMeshProUGUI outputText;
+    private readonly string API_URL = ApiConfig.GetFullUrl(ApiConfig.Endpoints.GenerateSchedule);
 
-    void Start()
+    public void SendMockScheduleRequest()
     {
-        StartCoroutine(SendMockScheduleRequest());
+        StartCoroutine(RunScheduleRequest());
     }
 
-    IEnumerator SendMockScheduleRequest()
+    private IEnumerator RunScheduleRequest()
     {
         StudyRequest request = new StudyRequest
         {
@@ -89,27 +92,50 @@ public class ScheduleApiClient : MonoBehaviour
 
         string json = JsonUtility.ToJson(request, true);
         UnityWebRequest www = new UnityWebRequest(API_URL, "POST");
+        www.timeout = 45; // Set a timeout for the request
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
         www.uploadHandler = new UploadHandlerRaw(bodyRaw);
         www.downloadHandler = new DownloadHandlerBuffer();
         www.SetRequestHeader("Content-Type", "application/json");
 
+        Debug.Log("Sending POST request to: " + API_URL);
+        Debug.Log("Request JSON: " + json);
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
         {
             Debug.LogError("Error: " + www.error);
+            Debug.LogError("Response Text: " + www.downloadHandler.text);
         }
         else
         {
-            string jsonResponse = www.downloadHandler.text;
-            ScheduleResponse schedule = JsonUtility.FromJson<ScheduleResponse>(jsonResponse);
-            Debug.Log("Parsed Schedule for: " + schedule.user_id);
-            Debug.Log("Total Sessions: " + schedule.sessions.Count);
+            ScheduleResponse schedule = JsonUtility.FromJson<ScheduleResponse>(www.downloadHandler.text);
+
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.AppendLine($"Parsed Schedule for: {schedule.user_id}");
+            sb.AppendLine($"Total Sessions: {schedule.sessions.Count}");
 
             foreach (var session in schedule.sessions)
             {
-                Debug.Log($"Task: {session.task.title}, Start: {session.start_time}, End: {session.end_time}, Break After: {session.break_after} mins");
+                sb.AppendLine($"Task: {session.task.title}, Start: {session.start_time}, End: {session.end_time}, Break After: {session.break_after} minutes");
+            }
+
+            if (schedule.warnings != null && schedule.warnings.Count > 0)
+            {
+                sb.AppendLine("\n⚠ Warnings:");
+                foreach (var warning in schedule.warnings)
+                {
+                    sb.AppendLine($"• {warning}");
+                }
+            }
+
+            if (outputText != null)
+            {
+                outputText.text = sb.ToString(); // Display result in ScrollView
+            }
+            else
+            {
+                Debug.LogWarning("⚠ outputText is null. UI not updated.");
             }
         }
     }

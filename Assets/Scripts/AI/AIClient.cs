@@ -6,7 +6,9 @@ public class AIClient : MonoBehaviour
 {
     public IEnumerator GetSchedule(string jsonPayload)
     {
-        UnityWebRequest request = new UnityWebRequest("http://localhost:8000/generate_schedule", "POST");
+        string url = ApiConfig.GetFullUrl(ApiConfig.Endpoints.GenerateSchedule);
+        UnityWebRequest request = new UnityWebRequest(url, "POST");
+        request.timeout = 45; // Set a timeout for the request
         byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonPayload);
         request.uploadHandler = new UploadHandlerRaw(bodyRaw);
         request.downloadHandler = new DownloadHandlerBuffer();
