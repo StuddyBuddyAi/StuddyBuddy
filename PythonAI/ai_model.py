@@ -3,6 +3,7 @@ import re
 import time
 import openai
 import asyncio
+import logging
 from openai import OpenAI, OpenAIError
 from dotenv import load_dotenv
 from datetime import timedelta
@@ -110,6 +111,7 @@ async def call_openai_api(prompt: str, max_retries: int = 3, delay: float = 2.0)
 
     for attempt in range(max_retries):
         try:
+            logging.info(f"[GPT] Attempt {attempt + 1} to call OpenAI")
             response = await asyncio.wait_for(
                 client.chat.completions.create(
                     model = "gpt-4",
@@ -124,16 +126,22 @@ async def call_openai_api(prompt: str, max_retries: int = 3, delay: float = 2.0)
                 timeout=30.0 # Timeout for the API call in seconds
             )
             text = response.choices[0].message.content.strip()
+            logging.debug(f"[GPT RAW TEXT] {text}")
             json_str = re.search(r"\[.*\]", text, re.DOTALL).group(0)
-            return json.loads(json_str)
+            parsed_json = json.loads(json_str)
+            logging.info("[GPT] Successfully parsed JSON response")
+            return parsed_json
+        
         except openai.APITimeoutError as te:
-            print(f"[RETRY] Timeout on attempt {attempt + 1}: {te}")
+            logging.warning(f"[GPT TIMEOUT] Timeout on attempt {attempt + 1}: {te}")
             time.sleep(delay)
+
         except json.JSONDecodeError as je:
-            print(f"[ERROR] JSON parsing failed: {je}")
+            logging.error(f"[GPT ERROR] JSON parsing failed: {je}")
             raise ValueError("Malformed JSON response from OpenAI API.")
+        
         except Exception as e:
-            print(f"[ERROR] Unexpected exception: {e}")
+            logging.error(f"[GPT ERROR] Unexpected exception: {e}")
             if attempt == max_retries - 1:
                 raise e
             time.sleep(delay)
