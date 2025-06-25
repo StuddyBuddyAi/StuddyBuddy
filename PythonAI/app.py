@@ -1,4 +1,5 @@
 import logging
+import asyncio
 from fastapi import FastAPI, HTTPException
 from ai_model import generate_schedule, format_schedule_prompt, call_openai_api
 from models import StudyRequest, ScheduleResponse
@@ -27,13 +28,13 @@ def schedule(request: StudyRequest):
     return generate_schedule(request)
 
 @app.post("/generate_ai_schedule/", response_model=ScheduleResponse)
-def generate_ai_schedule(request: StudyRequest):
+async def generate_ai_schedule(request: StudyRequest):
     """
     Calls OpenAI API with a formatted schedule prompt and returns raw response text.
     """
     try:
         prompt = format_schedule_prompt(request)
-        gpt_response = call_openai_api(prompt)
+        gpt_response = await call_openai_api(prompt)
 
         if not isinstance(gpt_response, list) or not all(isinstance(item, dict) for item in gpt_response):
             raise ValueError("Invalid response format from OpenAI API. Expected a list of session dictionaries.")
