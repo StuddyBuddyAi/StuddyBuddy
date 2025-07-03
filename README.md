@@ -85,7 +85,19 @@ This project is currently shared within the scope of a team project and is not y
 - [Michael Nathan Belisaire](https://github.com/SoldierTaker)
 - [Nathaniel McCleery](https://github.com/nate254347)
 
-## 🧪 Current Project Status : Alpha Milestone
+## 🧪 Current Project Status : Beta Build
+
+| Component             | Status                          |
+|-----------------------|----------------------------------|
+| Ai Calendar Notes         | 🔧 Under integration            |
+| Ai Chat Logs          | 🔧 Under integration            |
+| Pomodoro Timer        | ✅ UI functional, backend Under integration    |
+| Custom Ai Promting       | 🔧 Under integration          |
+| Variable amount of daily notes | 🔧 Under integration          |
+| Google Calendat sync  | 🔧 Under integration          |
+
+
+## 🧪 Previous Project Status : Alpha Build
 
 | Component             | Status                          |
 |-----------------------|----------------------------------|
