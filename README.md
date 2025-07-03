@@ -2,7 +2,7 @@
   <img src="docs/studybuddy_logo.png" alt="StudyBuddy Logo" width="200" />
 </p>
 
-<h1 align="center">StudyBuddy AI</h1>
+<h1 align="center">OwlvinAI</h1>
 
 <p align="center">
   Your intelligent study companion — powered by Unity and AI.
@@ -21,7 +21,7 @@
 
 ## 📚 About the Project
 
-**StudyBuddy AI** is a cross-platform productivity app designed to help students manage their time more effectively. By combining Unity with a Python-based AI backend, the app generates personalized study schedules and provides smart reminders, making it easier to stay organized and productive.
+**OwlvinAI** is a cross-platform productivity app designed to help students manage their time more effectively. By combining Unity with a Python-based AI backend, the app generates personalized study schedules and provides smart reminders, making it easier to stay organized and productive.
 
 This project is a team-led capstone initiative and is currently in **Alpha development**.
 
